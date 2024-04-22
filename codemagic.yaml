@@ -1,0 +1,86 @@
+workflows:
+  ios-workflow:
+    name: Flangapp PRO iOS without publication
+    max_build_duration: 30
+    environment:
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        APP_STORE_CONNECT_ISSUER_ID: d1e96a8b-4e81-425e-b0e7-7061ca9d4d4e
+        APP_STORE_CONNECT_KEY_IDENTIFIER: MFBBPWQKX6
+        APP_STORE_CONNECT_PRIVATE_KEY: |-
+         -----BEGIN PRIVATE KEY-----
+         MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgAaJziynTmyJsHvdX
+         lNeV/PFt2Krv0teP9ti3oGKRWiigCgYIKoZIzj0DAQehRANCAARDtf8Ncpwju+Re
+         MsOcXVb/vqYDXwT4RpMjkWROsAMC7YgmDC5hNP6czb3BsxqB8uj6inTAJMyRYxbK
+         sN05cWoM
+         -----END PRIVATE KEY-----
+
+        CERTIFICATE_PRIVATE_KEY: |-
+         -----BEGIN RSA PRIVATE KEY-----
+         MIIEowIBAAKCAQEAqzzMv72AiB9++WiVtJ9LGtX5+0On9ggwVNqRj6cbFcQTpNnT
+         HpU7rb5jWDn3aKS1kexMFXTlcdKSXXI6D+bOJzZg+GuwyZN0c6gx+ysCDAHCaXg5
+         nPXn5zX5B2yFVL+50wMt4+3pSIRX4HI1+FVqVsc6m2HBoQuddRAqk5l5k+vyK4R5
+         wEP6A6/up42D21xoPWf8A91fKltXlTr/+YGj1xiMb1+4PuYRPCaYwSdT8WK4qkRY
+         kOz4vfPSRZQrj0TI4LrhdIZ5qtL2hNDK8PZXjM61WSWJ6+qSRDj9SMj+kMrbNGnY
+         7L+S0jyUr9p9uz5pJrEhwPA/B/EPi7gd18mLawIDAQABAoIBAFMyV6KDLms0rkr8
+         WtwmluWDeBDx5q29fcoEZbufa6PwH8E1CgOuaw/31Cm+BCxl9kffQHoeUQozzmQz
+         hu1J7PiVTZj1LbBKgcZdvmbzluuBgVUgEhHmUhV+ni9StRcfjeftgALhiTnv/wgw
+         RXOSAHgIFTwAS4T08Tw6rg0HgM/yhEN1HqpKTzQuIIULw4IkP/hpOn3h8VVgbCA/
+         B3fs17c7IxOPeExN1c0e7cK+T1xCbLVMXg08NQB+GWgCWuJQgMO45ZPchfsHwdx4
+         FyZ6RJJU4xpVvDsWGVnmw27SzxxXwcAEH8UTV8ifyD/56+QuFgSkgOfU1KcX2rsP
+         OSiRAw0CgYEA0WazB0BN+ejSgMeSR1RFRhDrcYKFTYDK9HSiXYOJg+6jVPxUAIc3
+         bq6Jm9rGkMGuTRd4RME56vFfwg7dDBpkU8wtEtoI9ndTUOTbaBYEAoQP/vHxIuPa
+         CNM/SoFavizpdVqbmQJralIeUvRFyD1WkZG4j6eUaSmXPKR7l569bA0CgYEA0Vf3
+         ys5TRkKxCzNngh8ETabe/1rqCMSLKUuoAUlwLJQFVPtqt6KJTysjv5IdtaFyI+Jy
+         dGWbnayWTJmXSkFTi/jMlm1amdEW21dRssx2qcj/X5E31LdZpLuEA0TdtD8uAzlf
+         PM5s9lH3DjxQKqCPvHMfhvs3LZBDmFukMCJVX1cCgYAmofbnoJKCR9UGU0uGg2Kg
+         caCueXEUgm1vOlF2RT1KrO1PUZpB2rB8aBEVQwCdVk5NBMZ4kNmZodyT1eAsSnY2
+         C5ZJQxaiOhOR+hcMlfs5Z5n35DUjxbvFIwwrN8BBE9Iih4vrZ8nffLUBgvWY4tAk
+         3SiawEUePcEcPBBdQbkaxQKBgQDDIQrgZ+cpI3rg5N5DZGPfeX58aKKi34iTSmjk
+         Ii7D7oj1yI+VcZQpTh25MBovNbgtiKKEqj0eAEPsTHG/jhqw6ozQXkfH/iQe+Uo2
+         reyhn6+hxbtTtD+DlCGd5m/81bMu4ChMhmD8TDRLeZ6DzTuNPYWSjNDG0KSg/DKT
+         hz0qawKBgEYXrZOGX6H43E9cg8SitBKnVWBorHe3uoZxNjOCXRTYsiXo9whfsgtc
+         bhykigLWL9n7O9o2/8Y+FJvqo9bjH2s/Bfoorfvtb7/+hn9VuxbqeLyB+JlybaHa
+         PZ3qBj0+LxPlwJVZc/VDZQUGgLCoAOLZsbuyxL2MrfKOOHxW+PJU
+         -----END RSA PRIVATE KEY-----
+         
+
+        BUNDLE_ID: "app.webcode.at"
+      flutter: 3.16.7
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create --log-api-calls --verbose
+      - name: Use system default keychain
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
+          cd . && flutter packages pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter build ipa and automatic versioning
+        script: |
+          flutter build ipa --release --no-tree-shake-icons \
+          --build-name=1.0.0 \
+          --build-number=1 \
+          --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      scripts:
+        - name: HTTP notification
+          script: |
+            curl https://appbuilder.webcodeinfo.com/public/observe/notice?uid=17057946-7aa9-028b-233f-f1bebc2b39ab
