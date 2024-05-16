@@ -1,33 +1,85 @@
 workflows:
-  android-workflow:
-    name: Flangapp PRO Android apk
+  ios-workflow:
+    name: Flangapp PRO iOS without publication
     max_build_duration: 30
     environment:
       vars:
-        PACKAGE_NAME: "online.allis.learning"
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        APP_STORE_CONNECT_ISSUER_ID: d1e96a8b-4e81-425e-b0e7-7061ca9d4d4e
+        APP_STORE_CONNECT_KEY_IDENTIFIER: JWMP50KB0BOK
+        APP_STORE_CONNECT_PRIVATE_KEY: |-
+         -----BEGIN PRIVATE KEY-----
+         MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg/9+Ifw2a1KYrBexp
+         TOt+tAlpce4oIJOde8Yrn4jm8KOhRANCAATEtuHwARovx6F+dqdLKDhCOI/ki3i7
+         nIWF032AUjwQplGMl3JLQaUg5S2/PnIhCdhDIBm3aPYLXESpphdC5twL
+         -----END PRIVATE KEY-----
+
+        CERTIFICATE_PRIVATE_KEY: |-
+         -----BEGIN RSA PRIVATE KEY-----
+         MIIEpQIBAAKCAQEAtVlqkz7vyXrCjuM6sEI10Ie1BT4QDTdtbvaP2xMNksWIQ3Xg
+         I+Lte+nWAoxWQkf+CrwfGQI+9t7pgMWLC/lxDBnEWnyfPvUzoUDINiZWU6azh+VH
+         2aIKG+IlixIno80ByLgW9U+IH+/zmUN8fxkA/meokvGOmX/Af52mi9gaMVPf0/4s
+         KXw+KmQ3DSU9qYY2Le0RQpyc3EiZKb4kP5Jw1TxhxVZlEUOJibXNJMmNlEckirim
+         33bTJScTAy6HKNP9ZRIo5BGcSCLqdnPydNiMgbDO3n384nqjhZmqwHIe6fzSnDET
+         QBvwYxEuMeDWrEY4BTsHdQx++CTihlbWjdxFRQIDAQABAoIBAC0dgZYAIkdNcvl5
+         LjCLSDgIitAzEGs5TtA8Jq2pn8bTvYKK4KgM3GfnVIZtw0faASlKg7IFDQT9j7mp
+         a14fQDByeJbKShOvjJihNS3De9ZzslYshCNwXHNzX0Op0JK/faIhqhR9JLBNUZzf
+         XSmBXu3re9SSo5csYQdegQBpUprSh6cbiwyaxkV+yUIOQxXpt3SDTj7YK/zSAbA/
+         KJ+nHBfpd9Dih/R768u1ENqfZu923GvLR54AUZGdrxplBpxqM4NN5HTYbWYubG83
+         WiMtgxxAew8KrCcmRUC8YR5rtHX4eE82mdW6V8WZrzjgfrielpzauvGntNLRXquS
+         SKF4QkECgYEA0CAm1DLATkn76dJTkBI8adGOksCuzaR/KBnnjQj1qqSwoivz7/85
+         RmwhHCV4AsBtRRZ/UW+XNZOd0RPzau5h6F4JR6607R66P3NNJAxHp1nXZNTQby45
+         Iy6OHoJZcnWa1aY97Vrr+kRQNrfo33p4hJwVHqkbtQDh3WeTiSUYMcMCgYEA3xB+
+         YCBYqEXS12QnRAKcvpI2wc1yic0MCkZXVKgryfkwTmJ0aCXTfYgWYNxk3L7IWgLM
+         wBAIEdsoRdPISKw9Ew6MpuGAUrtv6ZrVQxBD68kUlsN+5pwZnN6ukJhWLc9gAVy3
+         97opeAFWXvEN9Em2WUq6g1uZw0TLKVhHYbMddFcCgYEAgszyGkKbIZjVvan14oHT
+         fh25oPl/4rYTRDyjjbunycsfR4ygDqE0edHTLUFPH0uYYOc2tROQ0JcphBEp1nZj
+         CgqvgmGGS9AX9XCddp5RGhgYisJFDNrcBgRoRTxewtSurr+ABAA0dmEgmIMU0/7A
+         Z3dAvrhBNYyMZv2Fd5fckMkCgYEAt7OJn/iDivEV1jSw8Z2FIJyhY7GiZkHrbHrJ
+         aPqmNUt2sNb8LtkX9wWgCFz446JqtVYg8PtC6hGmdPsYsmDGW29b/gMv/vJGFAhj
+         ITu/8+pBfne5hol/vmTVNld+gXOLCRQmnWk+xYm0a7PxXgFmntqgB5XkZ5+8AGyn
+         PJqZ4zkCgYEAr1g4fCfxm4dwWCW+4Q5eQ79yETUtESzfENgUu8ZLFxkePPipdmxr
+         CMzvLH/RSqDCfe5UkT3Gwg2z3QEq+GXvTWKVuOT+jajhO6gBS2wRRsAA20aWCXot
+         OoWIzNx2kGVPtUUDE/bE5m5PJv/S25+Txmyq0R1TdvOhD8iVrflvK5w=
+         -----END RSA PRIVATE KEY-----
+         
+
+        BUNDLE_ID: "online.allis.learning"
       flutter: 3.16.7
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up local.properties
+      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
         script: |
-          echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create --log-api-calls --verbose
+      - name: Use system default keychain
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
       - name: Get Flutter packages
         script: |
           cd . && flutter packages pub get
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
-      - name: Build APK with Flutter
+      - name: Flutter build ipa and automatic versioning
         script: |
-          cd . && flutter build apk --release --no-tree-shake-icons --build-name=1.0.1 --build-number=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))
+          flutter build ipa --release --no-tree-shake-icons \
+          --build-name=1.0.0 \
+          --build-number=1 \
+          --export-options-plist=/Users/builder/export_options.plist
     artifacts:
-      - build/**/outputs/**/*.apk
-      - build/**/outputs/**/*.aab
-      - build/**/outputs/**/mapping.txt
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
     publishing:
       scripts:
         - name: HTTP notification
           script: |
-            curl https://appbuilder.webcodeinfo.com/public/observe/notice?uid=a7d377e7-2c67-7b82-5610-11b130a8fb9a
+            curl https://appbuilder.webcodeinfo.com/public/observe/notice?uid=598c657d-8b66-ec08-9baf-8b435be908f1
